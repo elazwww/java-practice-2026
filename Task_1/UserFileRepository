@@ -1,0 +1,51 @@
+package ru.itis.shop.user.infrastructure.persistence;
+
+import ru.itis.shop.user.domain.User;
+import ru.itis.shop.user.repository.UserRepository;
+
+import java.io.*;
+import java.util.UUID;
+
+public class UserFileRepository implements UserRepository {
+
+    private final String fileName;
+
+    public UserFileRepository(String fileName) {
+        this.fileName = fileName;
+    }
+
+    @Override
+    public void save(User user) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName, true))) {
+            String id = UUID.randomUUID().toString();
+            user.setId(id);
+            writer.write(user.getId() + "|" +
+                    user.getEmail() + "|" +
+                    user.getPassword() + "|" +
+                    user.getProfileDescription());
+            writer.newLine();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    @Override
+    public void findById(String id) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(fileName))){
+            String line;
+            String email = "";
+            while ((line = reader.readLine()) != null) {
+                String currentId = line.substring(0, line.indexOf("|"));
+                if (currentId.equals(id)) {
+                    email = line.substring(line.indexOf("|") + 1, currentId.length() + 1 + line.substring(line.indexOf("|") + 1).indexOf("|"));
+                    System.out.println(email);
+                }
+            }
+            if (email == null) {
+                System.out.println("Пользователь с id - " + id + " не найден");
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+}
