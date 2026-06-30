@@ -1,0 +1,4 @@
+b1af5df5-99f4-4215-8c9e-4004cc10f9b9|elza@mail.ru|qazzaq07|Programmer
+null|9858df6d-be76-48c2-97a8-4e9b83c56b80|kamilya@gmail.com|people
+7ab1026b-49c1-4ee5-844e-6177d0da6c2d|polina@mail.ru|qwer07|Designer
+null|09865b23-cc13-4a20-9446-1067f10c3f6f|venera@mail.ru|Apple
