@@ -1,0 +1,53 @@
+package org.example.ru.itis.shop.user.application;
+
+import org.example.ru.itis.shop.user.api.dto.UserDto;
+import org.example.ru.itis.shop.user.domain.User;
+import org.example.ru.itis.shop.user.repository.UserRepository;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public void signUp(String name, String email, String password, String profileDescription) {
+        User user = new User(name, email, password, profileDescription);
+        userRepository.save(user);
+    }
+
+    public boolean signIn(String email, String password) {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+
+        if (userOptional.isPresent()) {
+            return userOptional.get().getPassword().equals(password);
+        }
+        return false;
+    }
+
+    public UserDto findUserById(Integer id){
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("User with id " + id + " not found!"));
+        return new UserDto(user.getId(), user.getEmail(), user.getProfileDescription());
+    }
+
+    public void updateProfileDescriptionByEmail(String email, String newProfileDescription) {
+        userRepository.updateProfileDescriptionByEmail(email, newProfileDescription);
+    }
+
+    public List<UserDto> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(user -> new UserDto(user.getId(), user.getEmail(), user.getProfileDescription()))
+                .collect(Collectors.toList());
+    }
+
+    public List<UserDto> getUsersByProfileDescription(String profileDescription) {
+        return userRepository.findAllByProfileDescription(profileDescription).stream()
+                .map(user -> new UserDto(user.getId(), user.getEmail(), user.getProfileDescription()))
+                .collect(Collectors.toList());
+    }
+}
